@@ -1,0 +1,7 @@
+pyrightconfig.json
+*.session
+/venv/
+.env
+.idea
+__pycache__
+*.log
