@@ -60,6 +60,7 @@ def run():
                 await message.delete()
                 await m.edit_text("sending...")
                 doc = await message.reply_document(byt)
+                logger.info(f"send file to {username}")
                 await m.delete()
                 await asyncio.sleep(240)
                 await doc.delete()
