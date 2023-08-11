@@ -1,5 +1,5 @@
-import codecs
 import io
+import asyncio
 import epitran
 from loguru import logger
 import csv
@@ -29,6 +29,9 @@ def run():
     )
     async def hello(client: Client, message: Message):
         epit = epitran.Epitran("eng-Latn")
+        username = message.from_user.username
+        logger.info(f"get file from {username}")
+
         m = await message.reply_text("dowloading...")
         file = await client.download_media(message, "lan.csv", True)
         if not isinstance(file, io.BytesIO):
@@ -37,27 +40,31 @@ def run():
         await m.edit_text("convering...")
         reader = csv.reader(s)
 
-        byt = io.BytesIO()
-        byt.name = "words.csv"
-        f = io.TextIOWrapper(byt, encoding="utf-8")
-        writer = csv.writer(f, delimiter=";", quoting=csv.QUOTE_ALL)
-        for i in reader:
-            if i[0] != "en":
-                continue
-            word = i[2]
-            tr = i[3]
-            p_tr = i[4]
-            ex = i[5]
-            tr_ex = i[6]
-            pronoun = epit.transliterate(word.lower())
+        with io.BytesIO() as byt:
+            byt.name = "words.csv"
+            with io.TextIOWrapper(byt, encoding="utf-8") as f:
+                writer = csv.writer(f, delimiter=";", quoting=csv.QUOTE_ALL)
+                for i in reader:
+                    if i[0] != "en":
+                        continue
+                    word = i[2]
+                    tr = i[3]
+                    p_tr = i[4]
+                    ex = i[5]
+                    tr_ex = i[6]
+                    pronoun = epit.transliterate(word.lower())
 
-            writer.writerow([word, pronoun, f"{tr} | {p_tr}", ex, tr_ex])
+                    writer.writerow([word, pronoun, f"{tr} | {p_tr}", ex, tr_ex])
 
-        f.flush()
-        await m.edit_text("sending...")
-        await message.reply_document(byt)
-        await m.delete()
-        logger.info(f"procced file from {message.from_user.username}")
+                f.flush()
+                await message.delete()
+                await m.edit_text("sending...")
+                doc = await message.reply_document(byt)
+                await m.delete()
+                await asyncio.sleep(240)
+                await doc.delete()
+            file_name = message.document.file_name
+            logger.info(f"finish file from {username} with name {file_name}")
 
     logger.info("runing")
     app.run()
