@@ -62,7 +62,7 @@ def run():
                 doc = await message.reply_document(byt)
                 logger.info(f"send file to {username}")
                 await m.delete()
-                await asyncio.sleep(240)
+                await asyncio.sleep(16)
                 await doc.delete()
             file_name = message.document.file_name
             logger.info(f"finish file from {username} with name {file_name}")
