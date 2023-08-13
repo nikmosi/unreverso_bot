@@ -7,5 +7,7 @@ jobs:
   test:
     runs-on: self-hosted
     steps:
-      - name: echo
-        run: pwd
+      - name: ls
+        run: ls
+      - name: mk
+        run: mkdir asd
