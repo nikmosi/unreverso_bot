@@ -2,6 +2,7 @@ import asyncio
 import csv
 import io
 import os
+from typing import List
 
 import epitran
 from dotenv import load_dotenv
@@ -24,6 +25,15 @@ class ReWord:
         words = [self.translated_word, self.extra_translation]
         ex_tr = " | ".join(filter(lambda a: len(a) > 0, words))
         return ex_tr
+
+    def to_list(self) -> List[str]:
+        return [
+            self.word,
+            self.pronouncing,
+            self.translated_word_with_extra,
+            self.example,
+            self.translated_example,
+        ]
 
     @staticmethod
     def parse(data: list, epit: epitran.Epitran) -> "ReWord":
@@ -57,42 +67,37 @@ def run():
     async def convert_document(client: Client, message: Message):
         epit = epitran.Epitran("eng-Latn")
         username = message.from_user.username
+        file_name = message.document.file_name
         logger.info(f"get file from {username}")
 
         m = await message.reply_text("dowloading...")
+
         file = await client.download_media(message, "lan.csv", True)
         if not isinstance(file, io.BytesIO):
             return
-        s = bytes(file.getbuffer()).decode().split("\n")
+
+        reader = csv.reader(bytes(file.getbuffer()).decode().split("\n"))
         await m.edit_text("convering...")
-        reader = csv.reader(s)
 
-        with io.BytesIO() as byt:
+        with io.BytesIO() as byt, io.TextIOWrapper(byt, encoding="utf-8") as f:
             byt.name = "words.csv"
-            with io.TextIOWrapper(byt, encoding="utf-8") as f:
-                writer = csv.writer(f, delimiter=";", quoting=csv.QUOTE_ALL)
-                for i in filter(lambda a: a[0] == "en", reader):
-                    rw = ReWord.parse(i, epit)
-                    writer.writerow(
-                        [
-                            rw.word,
-                            rw.pronouncing,
-                            rw.translated_word_with_extra,
-                            rw.example,
-                            rw.translated_example,
-                        ]
-                    )
+            writer = csv.writer(f, delimiter=";", quoting=csv.QUOTE_ALL)
 
-                f.flush()
-                await message.delete()
-                await m.edit_text("sending...")
-                doc = await message.reply_document(byt)
-                logger.info(f"send file to {username}")
-                await m.delete()
-                await asyncio.sleep(16)
-                await doc.delete()
-            file_name = message.document.file_name
-            logger.info(f"finish file from {username} with name {file_name}")
+            for i in filter(lambda a: a[0] == "en", reader):
+                rw = ReWord.parse(i, epit)
+                writer.writerow(rw.to_list())
+            f.flush()
+
+            await message.delete()
+            await m.edit_text("sending...")
+            doc = await message.reply_document(byt)
+            logger.info(f"send file to {username}")
+
+        await m.delete()
+        await asyncio.sleep(16)
+        await doc.delete()
+
+        logger.info(f"finish file from {username} with name {file_name}")
 
     logger.info("running")
     app.run()
