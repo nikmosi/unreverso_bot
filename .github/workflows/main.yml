@@ -8,4 +8,4 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: ls
-        run: git pull
+        run: poetry install >> poetry.log && git pull
