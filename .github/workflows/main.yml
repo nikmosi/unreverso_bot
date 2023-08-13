@@ -7,5 +7,5 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - name: echo
-    - run: echo $PR_PATH
+      - name: echo
+      - run: echo $PR_PATH
