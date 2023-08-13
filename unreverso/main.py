@@ -68,13 +68,17 @@ def run():
                     if i[0] != "en":
                         continue
                     rw = ReWord.parse(i, epit)
+                    words = [rw.translated_word, rw.extra_translation]
+                    ex_tr = " | ".join(
+                            filter(
+                                lambda a: len(a) > 0,
+                                words
+                            )
+                    )
 
                     writer.writerow([rw.word,
                                      rw.pronouncing,
-                                     " | ".join(
-                                         [rw.translated_word,
-                                          rw.extra_translation]
-                                     ),
+                                     ex_tr,
                                      rw.example,
                                      rw.translated_example
                                      ])
