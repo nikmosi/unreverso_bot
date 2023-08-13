@@ -1,0 +1,11 @@
+name: auto deploy
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+jobs:
+  test:
+    runs-on: self-hosted
+    steps:
+    - name: echo
+    - run: echo $PR_PATH
