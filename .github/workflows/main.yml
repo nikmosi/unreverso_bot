@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: echo
-      - run: echo $PR_PATH
+        run: echo $PR_PATH
