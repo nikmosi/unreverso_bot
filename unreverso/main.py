@@ -19,8 +19,7 @@ class ReWord:
     pronouncing: str
 
     @staticmethod
-    def parse(data: list) -> 'ReWord':
-        epit = epitran.Epitran("eng-Latn")
+    def parse(data: list, epit: epitran.Epitran) -> 'ReWord':
         rw = ReWord()
         rw.word = data[2]
         rw.translated_word = data[3]
@@ -49,6 +48,7 @@ def run():
         (filters.user("nikmosi") | filters.user("nikmosi_alt"))
     )
     async def hello(client: Client, message: Message):
+        epit = epitran.Epitran("eng-Latn")
         username = message.from_user.username
         logger.info(f"get file from {username}")
 
@@ -67,7 +67,7 @@ def run():
                 for i in reader:
                     if i[0] != "en":
                         continue
-                    rw = ReWord.parse(i)
+                    rw = ReWord.parse(i, epit)
 
                     writer.writerow([rw.word,
                                      rw.pronouncing,
