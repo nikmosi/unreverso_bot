@@ -7,7 +7,9 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - name: poetry install
-        run: pwd && poetry install
+      - name: pwd
+        run: pwd
+      - name: poetry install >> poetry.log
+        run: poetry install
       - name: git pull
         run: git pull
