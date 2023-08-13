@@ -12,6 +12,7 @@ tgcrypto = "^1.2.5"
 python-dotenv = "^1.0.0"
 loguru = "^0.7.0"
 epitran = "^1.24"
+python-magic = "^0.4.27"
 
 
 [build-system]
