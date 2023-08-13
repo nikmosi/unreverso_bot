@@ -5,6 +5,7 @@ import os
 from typing import List
 
 import epitran
+import magic
 from dotenv import load_dotenv
 from loguru import logger
 from pyrogram import filters
@@ -76,7 +77,10 @@ def run():
         if not isinstance(file, io.BytesIO):
             return
 
-        reader = csv.reader(bytes(file.getbuffer()).decode().split("\n"))
+        byte_view = bytes(file.getbuffer())
+        logger.info(magic.from_buffer(byte_view, mime=True))
+        logger.info(magic.from_buffer(byte_view, mime=False))
+        reader = csv.reader(byte_view.decode().split("\n"))
         await m.edit_text("convering...")
 
         with io.BytesIO() as byt, io.TextIOWrapper(byt, encoding="utf-8") as f:
