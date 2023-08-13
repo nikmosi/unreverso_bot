@@ -78,8 +78,13 @@ def run():
             return
 
         byte_view = bytes(file.getbuffer())
-        logger.info(magic.from_buffer(byte_view, mime=True))
-        logger.info(magic.from_buffer(byte_view, mime=False))
+        mime_type = magic.from_buffer(byte_view, mime=True)
+        if mime_type != "text/plain":
+            await m.edit_text("bad type(")
+            await asyncio.sleep(4)
+            await m.delete()
+            await message.delete()
+            return
         reader = csv.reader(byte_view.decode().split("\n"))
         await m.edit_text("convering...")
 
