@@ -8,6 +8,6 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: poetry install
-        run: poetry install
+        run: pwd && poetry install
       - name: git pull
         run: git pull
