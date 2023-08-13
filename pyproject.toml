@@ -6,7 +6,7 @@ authors = ["nik <i@nikmosi.ru>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.9"
 pyrogram = "^2.0.106"
 tgcrypto = "^1.2.5"
 python-dotenv = "^1.0.0"
