@@ -32,7 +32,7 @@ def run():
         username = message.from_user.username
         logger.info(f"get file from {username}")
 
-        m = await message.reply_text("dowloading...)")
+        m = await message.reply_text("dowloading...")
         file = await client.download_media(message, "lan.csv", True)
         if not isinstance(file, io.BytesIO):
             return
