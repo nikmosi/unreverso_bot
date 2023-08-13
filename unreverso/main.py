@@ -19,7 +19,7 @@ class ReWord:
     pronouncing: str
 
     @staticmethod
-    def parse(data: list, epit: epitran.Epitran) -> 'ReWord':
+    def parse(data: list, epit: epitran.Epitran) -> "ReWord":
         rw = ReWord()
         rw.word = data[2]
         rw.translated_word = data[3]
@@ -43,9 +43,9 @@ def run():
     app = Client("bot", api_id, api_hash)
 
     @app.on_message(
-        filters.document &
-        filters.private &
-        (filters.user("nikmosi") | filters.user("nikmosi_alt"))
+        filters.document
+        & filters.private
+        & (filters.user("nikmosi") | filters.user("nikmosi_alt"))
     )
     async def convert_document(client: Client, message: Message):
         epit = epitran.Epitran("eng-Latn")
@@ -69,19 +69,17 @@ def run():
                         continue
                     rw = ReWord.parse(i, epit)
                     words = [rw.translated_word, rw.extra_translation]
-                    ex_tr = " | ".join(
-                            filter(
-                                lambda a: len(a) > 0,
-                                words
-                            )
-                    )
+                    ex_tr = " | ".join(filter(lambda a: len(a) > 0, words))
 
-                    writer.writerow([rw.word,
-                                     rw.pronouncing,
-                                     ex_tr,
-                                     rw.example,
-                                     rw.translated_example
-                                     ])
+                    writer.writerow(
+                        [
+                            rw.word,
+                            rw.pronouncing,
+                            ex_tr,
+                            rw.example,
+                            rw.translated_example,
+                        ]
+                    )
 
                 f.flush()
                 await message.delete()
@@ -99,6 +97,5 @@ def run():
 
 
 if __name__ == "__main__":
-    logger.add("unreverso.log", rotation="10 MB",
-               compression="bz2", level="DEBUG")
+    logger.add("unreverso.log", rotation="10 MB", compression="bz2", level="DEBUG")
     run()
