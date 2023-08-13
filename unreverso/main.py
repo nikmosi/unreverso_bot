@@ -81,7 +81,7 @@ def run():
         mime_type = magic.from_buffer(byte_view, mime=True)
         if mime_type != "text/plain":
             logger.info(f"get bad type {mime_type} from {username}")
-            await m.edit_text("bad type(")
+            await m.edit_text("bad type(((")
             await asyncio.sleep(4)
             await m.delete()
             await message.delete()
