@@ -47,7 +47,7 @@ def run():
         filters.private &
         (filters.user("nikmosi") | filters.user("nikmosi_alt"))
     )
-    async def hello(client: Client, message: Message):
+    async def convert_document(client: Client, message: Message):
         epit = epitran.Epitran("eng-Latn")
         username = message.from_user.username
         logger.info(f"get file from {username}")
