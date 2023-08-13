@@ -1,12 +1,13 @@
-import io
 import asyncio
-import epitran
-from loguru import logger
 import csv
+import io
 import os
+
+import epitran
 from dotenv import load_dotenv
-from pyrogram.client import Client
+from loguru import logger
 from pyrogram import filters
+from pyrogram.client import Client
 from pyrogram.types.messages_and_media.message import Message
 
 
@@ -17,6 +18,12 @@ class ReWord:
     example: str
     translated_example: str
     pronouncing: str
+
+    @property
+    def translated_word_with_extra(self):
+        words = [self.translated_word, self.extra_translation]
+        ex_tr = " | ".join(filter(lambda a: len(a) > 0, words))
+        return ex_tr
 
     @staticmethod
     def parse(data: list, epit: epitran.Epitran) -> "ReWord":
@@ -64,18 +71,13 @@ def run():
             byt.name = "words.csv"
             with io.TextIOWrapper(byt, encoding="utf-8") as f:
                 writer = csv.writer(f, delimiter=";", quoting=csv.QUOTE_ALL)
-                for i in reader:
-                    if i[0] != "en":
-                        continue
+                for i in filter(lambda a: a[0] == "en", reader):
                     rw = ReWord.parse(i, epit)
-                    words = [rw.translated_word, rw.extra_translation]
-                    ex_tr = " | ".join(filter(lambda a: len(a) > 0, words))
-
                     writer.writerow(
                         [
                             rw.word,
                             rw.pronouncing,
-                            ex_tr,
+                            rw.translated_word_with_extra,
                             rw.example,
                             rw.translated_example,
                         ]
