@@ -75,6 +75,9 @@ def run():
 
         file = await client.download_media(message, "lan.csv", True)
         if not isinstance(file, io.BytesIO):
+            await m.delete()
+            await message.delete()
+            logger.warning("download isn't bytesio")
             return
 
         byte_view = bytes(file.getbuffer())
