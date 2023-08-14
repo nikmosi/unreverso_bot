@@ -9,7 +9,9 @@ jobs:
     steps:
       - name: pwd
         run: pwd
-      - name: poetry install >> poetry.log
-        run: poetry install
       - name: git pull
         run: git pull
+      - name: poetry install >> poetry.log
+        run: poetry install
+      - name: restarting
+        run: touch unreverso/touch_me_to_restart
